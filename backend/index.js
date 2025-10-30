@@ -9,6 +9,7 @@
   
 import facultyRoutes from "./routes/faculty.js"; 
 import adminRoutes from "./routes/admin.js"
+import studentRoutes from "./routes/student.js"
 app.use("",(req,res,next)=>{
   console.log("koi to req aayi hai ");
   next();
@@ -16,6 +17,7 @@ app.use("",(req,res,next)=>{
 
 app.use("/faculty", facultyRoutes);
 app.use("/admin",adminRoutes);
+app.use("/student",studentRoutes);
 
 
 
