@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import axios from "axios";
+import  { useNavigate  } from "react-router-dom"
+
 
 const Login = ({ setUserType }) => {
+  const navigate = useNavigate()
   const [role, setRole] = useState("student");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -59,27 +62,40 @@ const Login = ({ setUserType }) => {
 
   const current = roleConfig[role];
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
-    try {
-      const res = await axios.post(`http://localhost:5000/api/${role}/login`, {
-        email,
-        password,
-      });
+const handleLogin = async (e) => {
+  e.preventDefault();
+  setError("");
+  setLoading(true);
 
-      if (res.status === 200) {
-        setUserType(role);
-      } else {
-        setError("Invalid credentials");
-      }
-    } catch (err) {
-      setError("Login failed. Check credentials or server.");
-    } finally {
-      setLoading(false);
+  try {
+    const res = await axios.post(`http://localhost:4000/login/${role}`, {
+      email,
+      password,
+    });
+
+    if (res.status === 200) {
+      let user = res.data.user;
+      console.log(user);
+    
+      
+      navigate(`/${role}`,  { state: {
+            id:user.id,
+            name:user.name,
+            email: user.email
+          }})
+      
+      
+    } else {
+      setError("Invalid credentials");
     }
-  };
+  } catch (err) {
+    console.error("Login Error:", err);
+    setError("Login failed. Check credentials or server.");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div className={`min-h-screen bg-gradient-to-br ${current.gradient} flex items-center justify-center p-6`}>

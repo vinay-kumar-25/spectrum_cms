@@ -14,7 +14,7 @@ const View_Students = () => {
 
   const server = "http://localhost:4000/admin";
 
-  // Fetch all students
+  /* -------------------- FETCH STUDENTS -------------------- */
   useEffect(() => {
     axios
       .get(`${server}/getAllStudents`)
@@ -26,7 +26,7 @@ const View_Students = () => {
       .finally(() => setLoading(false));
   }, []);
 
-  // Apply filters & search
+  /* -------------------- FILTER + SEARCH -------------------- */
   useEffect(() => {
     let temp = [...students];
 
@@ -34,22 +34,25 @@ const View_Students = () => {
       temp = temp.filter(
         (s) =>
           s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          s.roll.toLowerCase().includes(searchTerm.toLowerCase())
+          s.roll.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (s.email && s.email.toLowerCase().includes(searchTerm.toLowerCase()))
       );
     }
 
     if (filterBranch) temp = temp.filter((s) => s.branch === filterBranch);
-    if (filterYear) temp = temp.filter((s) => String(s.enroll_year) === String(filterYear));
+    if (filterYear)
+      temp = temp.filter((s) => String(s.enroll_year) === String(filterYear));
 
     setFilteredStudents(temp);
   }, [searchTerm, filterBranch, filterYear, students]);
 
+  /* -------------------- TOAST HANDLER -------------------- */
   const showToast = (msg, type = "success") => {
     setToast({ msg, type });
     setTimeout(() => setToast(null), 2500);
   };
 
-  // Delete student
+  /* -------------------- DELETE STUDENT -------------------- */
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this student?")) return;
     try {
@@ -62,20 +65,24 @@ const View_Students = () => {
     }
   };
 
-  // Update student
+  /* -------------------- UPDATE STUDENT -------------------- */
   const handleUpdate = async () => {
-    const { id, name, roll, branch, enroll_year, password } = updateModal;
-    if (!name || !roll || !branch || !enroll_year || !password) return;
+    const { id, name, email, roll, branch, enroll_year, password } = updateModal;
+    if (!name || !email || !roll || !branch || !enroll_year || !password)
+      return showToast("All fields are required", "error");
 
     try {
       await axios.put(`${server}/updateStudent/${id}`, {
         name,
+        email,
         roll,
         branch,
         enroll_year,
         password,
       });
-      setStudents((prev) => prev.map((s) => (s.id === id ? updateModal : s)));
+      setStudents((prev) =>
+        prev.map((s) => (s.id === id ? updateModal : s))
+      );
       showToast("Student updated successfully!");
       setUpdateModal(null);
     } catch (err) {
@@ -84,6 +91,7 @@ const View_Students = () => {
     }
   };
 
+  /* -------------------- LOADING STATE -------------------- */
   if (loading)
     return (
       <div className="text-center text-green-700 font-semibold">
@@ -91,6 +99,7 @@ const View_Students = () => {
       </div>
     );
 
+  /* -------------------- MAIN UI -------------------- */
   return (
     <div className="w-full h-full bg-green-50 p-6 rounded-2xl border border-green-200 shadow-sm">
       <h2 className="text-2xl font-bold text-green-800 text-center mb-6">
@@ -101,7 +110,7 @@ const View_Students = () => {
       <div className="flex flex-wrap gap-3 mb-4">
         <input
           type="text"
-          placeholder="Search by Name/Roll"
+          placeholder="Search by Name/Roll/Email"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="p-2 rounded-lg border border-green-300 focus:outline-none focus:ring-1 focus:ring-green-400 flex-1"
@@ -150,6 +159,7 @@ const View_Students = () => {
               <tr className="bg-green-200 text-green-900 font-semibold">
                 <th className="p-3 text-left">ID</th>
                 <th className="p-3 text-left">Name</th>
+                <th className="p-3 text-left">Email</th>
                 <th className="p-3 text-left">Roll</th>
                 <th className="p-3 text-left">Branch</th>
                 <th className="p-3 text-left">Year</th>
@@ -164,6 +174,7 @@ const View_Students = () => {
                 >
                   <td className="p-3">{s.id}</td>
                   <td className="p-3">{s.name}</td>
+                  <td className="p-3">{s.email}</td>
                   <td className="p-3">{s.roll}</td>
                   <td className="p-3">{s.branch}</td>
                   <td className="p-3">{s.enroll_year}</td>
@@ -195,6 +206,7 @@ const View_Students = () => {
             <h3 className="text-xl font-bold text-green-800 mb-4">
               Update Student
             </h3>
+
             <input
               type="text"
               value={updateModal.name}
@@ -204,6 +216,17 @@ const View_Students = () => {
               placeholder="Name"
               className="p-2 rounded-lg border border-green-300 mb-3 w-full"
             />
+
+            <input
+              type="email"
+              value={updateModal.email}
+              onChange={(e) =>
+                setUpdateModal({ ...updateModal, email: e.target.value })
+              }
+              placeholder="Email"
+              className="p-2 rounded-lg border border-green-300 mb-3 w-full"
+            />
+
             <input
               type="text"
               value={updateModal.roll}
@@ -213,6 +236,7 @@ const View_Students = () => {
               placeholder="Roll"
               className="p-2 rounded-lg border border-green-300 mb-3 w-full"
             />
+
             <select
               value={updateModal.branch}
               onChange={(e) =>
@@ -226,18 +250,17 @@ const View_Students = () => {
               <option value="MECH">MECH</option>
               <option value="CIV">CIV</option>
             </select>
+
             <input
               type="number"
               value={updateModal.enroll_year}
               onChange={(e) =>
-                setUpdateModal({
-                  ...updateModal,
-                  enroll_year: e.target.value,
-                })
+                setUpdateModal({ ...updateModal, enroll_year: e.target.value })
               }
               placeholder="Year"
               className="p-2 rounded-lg border border-green-300 mb-3 w-full"
             />
+
             <input
               type="password"
               value={updateModal.password}
@@ -247,6 +270,7 @@ const View_Students = () => {
               placeholder="Password"
               className="p-2 rounded-lg border border-green-300 mb-3 w-full"
             />
+
             <div className="flex justify-end gap-2">
               <button
                 onClick={() => setUpdateModal(null)}

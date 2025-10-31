@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'; // Using Axios for HTTP requests
 
-// IMPORTANT: Ensure this matches your backend URL (Port 4000, /student route)
+// IMPORTANT: Ensure this matches your backend URL (Port 4000, /student route) 
 const API_BASE_URL = 'http://localhost:4000/student'; 
 const STUDENT_ID = 6; // Example student ID
 

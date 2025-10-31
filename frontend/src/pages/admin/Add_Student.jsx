@@ -3,6 +3,7 @@ import axios from "axios";
 
 const Add_Student = () => {
   const [name, setName] = useState("");
+  const [email,setEmail] = useState("")
   const [roll, setRoll] = useState("");
   const [branch, setBranch] = useState("CSE");
   const [enrollYear, setEnrollYear] = useState("");
@@ -12,9 +13,9 @@ const Add_Student = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(server, { name, roll, branch, enroll_year: enrollYear, password });
+      await axios.post(server, { name,email, roll, branch, enroll_year: enrollYear, password });
       alert("Student added successfully!");
-      setName(""); setRoll(""); setBranch("CSE"); setEnrollYear(""); setPassword("");
+      setName(""); setRoll(""); setBranch("CSE"); setEnrollYear(""); setPassword(""); setEmail("")
     } catch (err) {
       console.error(err);
       alert("Error adding student.");
@@ -30,6 +31,12 @@ const Add_Student = () => {
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Name"
+            className="p-3 rounded-lg border border-green-300 focus:ring-2 focus:ring-green-400 focus:outline-none"
+          />
+          <input
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email"
             className="p-3 rounded-lg border border-green-300 focus:ring-2 focus:ring-green-400 focus:outline-none"
           />
           <input

@@ -109,11 +109,11 @@ router.delete("/deleteCourse/:id", async (req, res) => {
 
 // ✅ Add New Student
 router.post("/addStudent", async (req, res) => {
-  const { name, roll, branch, enroll_year, password } = req.body; // roll as string
+  const { name,email, roll, branch, enroll_year, password } = req.body; // roll as string
   try {
     const query =
-      "INSERT INTO s_t (name, roll, branch, enroll_year, password) VALUES (?, ?, ?, ?, ?)";
-    await db.execute(query, [name, roll, branch, enroll_year, password]);
+      "INSERT INTO s_t (name,email, roll, branch, enroll_year, password) VALUES (?,?, ?, ?, ?, ?)";
+    await db.execute(query, [name,email, roll, branch, enroll_year, password]);
     res.json({ message: "Student added successfully!" });
   } catch (err) {
     console.error("Error adding student:", err);
@@ -135,11 +135,11 @@ router.get("/getAllStudents", async (req, res) => {
 // ✅ Update Student
 router.put("/updateStudent/:id", async (req, res) => {
   const { id } = req.params;
-  const { name, roll, branch, enroll_year, password } = req.body;
+  const { name,email, roll, branch, enroll_year, password } = req.body;
   try {
     await db.execute(
-      "UPDATE s_t SET name = ?, roll = ?, branch = ?, enroll_year = ?, password = ? WHERE id = ?",
-      [name, roll, branch, enroll_year, password, id]
+      "UPDATE s_t SET name = ?,email = ? , roll = ?, branch = ?, enroll_year = ?, password = ? WHERE id = ?",
+      [name,email, roll, branch, enroll_year, password, id]
     );
     res.json({ message: "Student updated successfully!" });
   } catch (err) {
